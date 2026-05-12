@@ -89,7 +89,7 @@ export default function PricingCalculator() {
   };
 
   return (
-    <div className="flex flex-col lg:grid lg:grid-cols-2 gap-0 bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-100 max-w-5xl mx-auto my-12 min-h-[700px]" id="coach360-pricing-container">
+    <div className="flex flex-col lg:grid lg:grid-cols-2 gap-0 bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-100 max-w-5xl mx-auto min-h-[700px]" id="coach360-pricing-container">
       
       {/* Left Column: Interactive Settings / Form */}
       <div className="p-8 lg:p-12 space-y-10 bg-slate-50/50">
@@ -302,7 +302,7 @@ export default function PricingCalculator() {
       </div>
 
       {/* Right Column: Summary & Features */}
-      <div className="p-8 lg:p-12 bg-brand-dark text-white relative flex flex-col overflow-y-auto max-h-[900px] lg:max-h-none">
+      <div className="p-8 lg:p-12 bg-brand-dark text-white relative flex flex-col">
         <div className="relative z-10 h-full flex flex-col">
           <div className="space-y-1">
             <div className="text-brand-green font-black uppercase tracking-[0.2em] text-[10px]">Votre Devis Estimatif</div>
