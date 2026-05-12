@@ -75,17 +75,36 @@ export default function PricingCalculator() {
     setLicenses(parseInt(e.target.value));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real app, you would send this to a backend or use a service like EmailJS/Formspree
-    // to reach hello@hashtagknights.com
-    console.log('Sending to hello@hashtagknights.com:', {
-      ...formData,
-      licenses,
-      billing: isAnnual ? 'Annual' : 'Monthly',
-      price: pricing.monthlyTotal.toFixed(2) + '€/mois'
-    });
-    setView('success');
+    
+    try {
+      const response = await fetch('https://formspree.io/f/mpqbbnlk', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          name: formData.name,
+          club: formData.club,
+          licenses: licenses,
+          billing: isAnnual ? 'Annuel (-15%)' : 'Mensuel',
+          total_monthly: pricing.monthlyTotal.toFixed(2) + '€',
+          pack_name: pricing.tierName
+        }),
+      });
+
+      if (response.ok) {
+        setView('success');
+      } else {
+        alert("Erreur lors de l'envoi vers Formspree. Veuillez réessayer.");
+      }
+    } catch (error) {
+      console.error('Error sending form:', error);
+      alert("Une erreur est survenue lors de l'envoi.");
+    }
   };
 
   return (
