@@ -108,10 +108,10 @@ export default function PricingCalculator() {
   };
 
   return (
-    <div className="flex flex-col lg:grid lg:grid-cols-2 gap-0 bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-100 max-w-5xl mx-auto min-h-[700px]" id="coach360-pricing-container">
+    <div className="flex flex-col lg:grid lg:grid-cols-2 gap-0 bg-white rounded-2xl md:rounded-3xl shadow-2xl overflow-hidden border border-slate-100 max-w-5xl mx-auto lg:min-h-[700px]" id="coach360-pricing-container">
       
       {/* Left Column: Interactive Settings / Form */}
-      <div className="p-8 lg:p-12 space-y-10 bg-slate-50/50">
+      <div className="p-6 md:p-8 lg:p-12 space-y-8 md:space-y-10 bg-slate-50/50">
         <AnimatePresence mode="wait">
           {view === 'pricing' && (
             <motion.div 
@@ -119,35 +119,35 @@ export default function PricingCalculator() {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 20 }}
-              className="space-y-10"
+              className="space-y-6 md:space-y-10"
             >
-              <div className="space-y-4">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-green/10 text-brand-green text-xs font-bold uppercase tracking-wider">
-                  <Trophy size={14} />
+              <div className="space-y-3">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-green/10 text-brand-green text-[10px] font-bold uppercase tracking-wider">
+                  <Trophy size={12} />
                   Calculateur de tarif
                 </div>
-                <h2 className="text-4xl font-bold text-brand-dark tracking-tight leading-tight">
+                <h2 className="text-2xl md:text-4xl font-bold text-brand-dark tracking-tight leading-tight">
                   Configurez votre offre <span className="text-brand-green">Coach360</span>
                 </h2>
-                <p className="text-slate-600">
-                  Ajustez le curseur pour simuler le coût mensuel selon le nombre d'éducateurs dans votre structure.
+                <p className="text-sm md:text-base text-slate-600">
+                  Ajustez le curseur pour simuler le coût mensuel selon le nombre d'éducateurs.
                 </p>
               </div>
 
               {/* Licenses Input */}
-              <div className="space-y-6">
-                <div className="flex justify-between items-end">
-                  <label className="text-sm font-bold text-brand-dark uppercase tracking-wide flex items-center gap-2">
-                    <Users size={18} className="text-brand-green" />
-                    Nombre de licences
+              <div className="space-y-4 md:space-y-6">
+                <div className="flex justify-between items-end gap-4">
+                  <label className="text-[10px] md:text-sm font-bold text-brand-dark uppercase tracking-wide flex items-center gap-2">
+                    <Users size={16} className="text-brand-green" />
+                    <span className="hidden xs:inline">Nombre de</span> licences
                   </label>
                   <div className="text-right">
-                    <span className="text-4xl font-black text-brand-dark">{licenses}</span>
-                    <span className="text-slate-500 font-medium ml-1 text-sm">licences</span>
+                    <span className="text-2xl md:text-4xl font-black text-brand-dark">{licenses}</span>
+                    <span className="text-slate-500 font-medium ml-1 text-[10px] md:text-sm">licences</span>
                   </div>
                 </div>
                 
-                <div className="relative pt-2">
+                <div className="relative pt-1 md:pt-2">
                   <input
                     type="range"
                     min="5"
@@ -155,9 +155,9 @@ export default function PricingCalculator() {
                     step="1"
                     value={licenses}
                     onChange={handleSliderChange}
-                    className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-brand-green focus:outline-none"
+                    className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-brand-green focus:outline-none"
                   />
-                  <div className="flex justify-between mt-3 text-[10px] text-slate-400 font-black px-1 uppercase tracking-tighter">
+                  <div className="flex justify-between mt-2 text-[9px] text-slate-400 font-black px-1 uppercase tracking-tighter">
                     <span>5</span>
                     <span>10</span>
                     <span>20</span>
@@ -168,16 +168,16 @@ export default function PricingCalculator() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4 mt-4">
+                <div className="flex items-center gap-2 md:gap-4 mt-2">
                   <button 
                     onClick={() => setLicenses(Math.max(5, licenses - 1))}
-                    className="flex-1 py-3 px-4 rounded-xl border border-slate-200 bg-white text-brand-dark hover:bg-slate-50 hover:border-brand-green/30 transition-all font-bold"
+                    className="flex-1 py-2 px-4 rounded-lg md:rounded-xl border border-slate-200 bg-white text-brand-dark hover:bg-slate-50 hover:border-brand-green/30 transition-all font-bold text-sm"
                   >
                     -
                   </button>
                   <button 
                     onClick={() => setLicenses(Math.min(200, licenses + 1))}
-                    className="flex-1 py-3 px-4 rounded-xl border border-slate-200 bg-white text-brand-dark hover:bg-slate-50 hover:border-brand-green/30 transition-all font-bold"
+                    className="flex-1 py-2 px-4 rounded-lg md:rounded-xl border border-slate-200 bg-white text-brand-dark hover:bg-slate-50 hover:border-brand-green/30 transition-all font-bold text-sm"
                   >
                     +
                   </button>
@@ -185,24 +185,24 @@ export default function PricingCalculator() {
               </div>
 
               {/* Billing Cycle Toggle */}
-              <div className="space-y-4">
-                <label className="text-sm font-bold text-brand-dark uppercase tracking-wide flex items-center gap-2">
-                  <CreditCard size={18} className="text-brand-green" />
+              <div className="space-y-3">
+                <label className="text-[10px] md:text-sm font-bold text-brand-dark uppercase tracking-wide flex items-center gap-2">
+                  <CreditCard size={16} className="text-brand-green" />
                   Mode de facturation
                 </label>
-                <div className="grid grid-cols-2 gap-2 p-1.5 bg-slate-200 rounded-2xl relative">
+                <div className="grid grid-cols-2 gap-1.5 p-1 bg-slate-200 rounded-xl md:rounded-2xl relative">
                   <button
                     onClick={() => setIsAnnual(false)}
-                    className={`relative z-10 py-3 rounded-xl text-sm font-bold transition-all ${!isAnnual ? 'text-brand-green bg-white shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                    className={`relative z-10 py-2 md:py-3 rounded-lg md:rounded-xl text-[11px] md:text-sm font-bold transition-all ${!isAnnual ? 'text-brand-green bg-white shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
                   >
                     Mensuel
                   </button>
                   <button
                     onClick={() => setIsAnnual(true)}
-                    className={`relative z-10 py-3 rounded-xl text-sm font-bold transition-all ${isAnnual ? 'text-brand-green bg-white shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                    className={`relative z-10 py-2 md:py-3 rounded-lg md:rounded-xl text-[11px] md:text-sm font-bold transition-all ${isAnnual ? 'text-brand-green bg-white shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
                   >
                     Annuel
-                    <span className="ml-2 inline-block px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-[10px] font-black uppercase">
+                    <span className="ml-1 inline-block px-1.5 py-0.5 rounded-full bg-green-100 text-green-700 text-[8px] md:text-[10px] font-black uppercase">
                       -15%
                     </span>
                   </button>
@@ -321,48 +321,48 @@ export default function PricingCalculator() {
       </div>
 
       {/* Right Column: Summary & Features */}
-      <div className="p-8 lg:p-12 bg-brand-dark text-white relative flex flex-col">
+      <div className="p-6 md:p-8 lg:p-12 bg-brand-dark text-white relative flex flex-col">
         <div className="relative z-10 h-full flex flex-col">
           <div className="space-y-1">
-            <div className="text-brand-green font-black uppercase tracking-[0.2em] text-[10px]">Votre Devis Estimatif</div>
-            <h3 className="text-3xl font-black tracking-tight">{pricing.tierName}</h3>
+            <div className="text-brand-green font-black uppercase tracking-[0.2em] text-[9px] md:text-[10px]">Votre Devis Estimatif</div>
+            <h3 className="text-2xl md:text-3xl font-black tracking-tight">{pricing.tierName}</h3>
           </div>
 
-          <div className="mt-8 mb-10">
-            <div className="flex items-baseline gap-2">
+          <div className="mt-6 md:mt-8 mb-8 md:mb-10">
+            <div className="flex items-baseline gap-2 flex-wrap">
               <motion.span 
                 key={pricing.monthlyTotal}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="text-6xl font-black tracking-tighter"
+                className="text-4xl md:text-6xl font-black tracking-tighter"
               >
                 {pricing.monthlyTotal.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}€
               </motion.span>
-              <span className="text-slate-400 font-bold text-xl">/ mois</span>
+              <span className="text-slate-400 font-bold text-base md:text-xl">/ mois</span>
             </div>
             
             {isAnnual && (
               <motion.div 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="mt-2 text-brand-green text-sm font-bold flex items-center gap-2"
+                className="mt-2 text-brand-green text-[10px] md:text-sm font-bold flex items-center gap-2"
               >
-                <CheckCircle2 size={14} />
+                <CheckCircle2 size={12} />
                 Économie annuelle appliquée (-15%)
               </motion.div>
             )}
 
-            <div className="mt-6 flex items-center gap-3 py-3 px-4 rounded-xl bg-white/5 border border-white/10">
-              <Target size={20} className="text-brand-green shrink-0" />
-              <p className="text-sm text-slate-300">
+            <div className="mt-4 md:mt-6 flex items-center gap-3 py-2 md:py-3 px-3 md:px-4 rounded-xl bg-white/5 border border-white/10">
+              <Target size={18} className="text-brand-green shrink-0" />
+              <p className="text-[11px] md:text-sm text-slate-300">
                 Soit environ <span className="text-white font-bold">{pricing.pricePerUnit.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}€</span> par licence / mois
               </p>
             </div>
           </div>
 
           {/* Features - Updated with the specific text provided */}
-          <div className="mt-auto space-y-8">
-            <div className="space-y-4">
+          <div className="mt-auto space-y-6 md:space-y-8">
+            <div className="space-y-3 md:space-y-4">
               {[
                 "Gestion des rôles & accès",
                 "Catalogue interne du club",
@@ -371,11 +371,11 @@ export default function PricingCalculator() {
                 "Suivi & reporting des séances",
                 "Jim & Génération IA"
               ].map((feature, i) => (
-                <div key={i} className="flex items-center gap-3">
-                  <div className="bg-brand-green/20 p-1 rounded-full shrink-0">
-                    <CheckCircle2 size={14} className="text-brand-green" />
+                <div key={i} className="flex items-center gap-2 md:gap-3">
+                  <div className="bg-brand-green/20 p-0.5 rounded-full shrink-0">
+                    <CheckCircle2 size={12} className="text-brand-green" />
                   </div>
-                  <span className="text-sm font-bold text-slate-200">{feature}</span>
+                  <span className="text-xs md:text-sm font-bold text-slate-200">{feature}</span>
                 </div>
               ))}
             </div>
@@ -383,16 +383,16 @@ export default function PricingCalculator() {
             {view === 'pricing' && (
               <button 
                 onClick={() => setView('form')}
-                className="w-full bg-brand-green hover:brightness-105 text-white font-black py-5 rounded-2xl transition-all flex items-center justify-center gap-3 shadow-xl shadow-brand-dark/50 group uppercase tracking-widest text-sm"
+                className="w-full bg-brand-green hover:brightness-105 text-white font-black py-4 md:py-5 rounded-xl md:rounded-2xl transition-all flex items-center justify-center gap-3 shadow-xl shadow-brand-dark/50 group uppercase tracking-widest text-[11px] md:text-sm"
               >
                 Choisir cette formule
-                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
               </button>
             )}
           </div>
           
-          <div className="mt-8 flex items-center justify-center gap-2 text-slate-500 text-[10px] font-black uppercase tracking-widest">
-            <ShieldCheck size={14} className="text-brand-green" />
+          <div className="mt-6 md:mt-8 flex items-center justify-center gap-2 text-slate-500 text-[9px] md:text-[10px] font-black uppercase tracking-widest">
+            <ShieldCheck size={12} className="text-brand-green" />
             Sans engagement • Données sécurisées
           </div>
         </div>
