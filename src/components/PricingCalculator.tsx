@@ -9,10 +9,45 @@ import {
   Target,
   Trophy,
   Mail,
+  Phone,
   User,
   Building,
   ArrowLeft
 } from 'lucide-react';
+
+// Pricing Milestones for the non-linear slider scale
+const MILESTONES = [5, 10, 20, 35, 60, 100, 150];
+const STEPS_PER_SEGMENT = 100;
+const MAX_SLIDER_POS = (MILESTONES.length - 1) * STEPS_PER_SEGMENT; // 600
+
+const licensesToSliderPos = (lic: number): number => {
+  if (lic <= MILESTONES[0]) return 0;
+  if (lic >= MILESTONES[MILESTONES.length - 1]) return MAX_SLIDER_POS;
+
+  for (let i = 0; i < MILESTONES.length - 1; i++) {
+    const startVal = MILESTONES[i];
+    const endVal = MILESTONES[i + 1];
+    if (lic >= startVal && lic <= endVal) {
+      const ratio = (lic - startVal) / (endVal - startVal);
+      return Math.round((i + ratio) * STEPS_PER_SEGMENT);
+    }
+  }
+  return 0;
+};
+
+const sliderPosToLicenses = (pos: number): number => {
+  if (pos <= 0) return MILESTONES[0];
+  if (pos >= MAX_SLIDER_POS) return MILESTONES[MILESTONES.length - 1];
+
+  const segmentIndex = Math.min(
+    Math.floor(pos / STEPS_PER_SEGMENT),
+    MILESTONES.length - 2
+  );
+  const ratio = (pos - segmentIndex * STEPS_PER_SEGMENT) / STEPS_PER_SEGMENT;
+  const startVal = MILESTONES[segmentIndex];
+  const endVal = MILESTONES[segmentIndex + 1];
+  return Math.round(startVal + ratio * (endVal - startVal));
+};
 
 // Pricing Logic Implementation
 const calculatePrice = (licenses: number, isAnnual: boolean) => {
@@ -65,14 +100,19 @@ export default function PricingCalculator() {
   // Form State
   const [formData, setFormData] = useState({
     email: '',
+    phone: '',
     name: '',
     club: ''
   });
 
   const pricing = useMemo(() => calculatePrice(licenses, isAnnual), [licenses, isAnnual]);
 
+  const sliderPos = useMemo(() => licensesToSliderPos(licenses), [licenses]);
+  const sliderPercent = useMemo(() => (sliderPos / MAX_SLIDER_POS) * 100, [sliderPos]);
+
   const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLicenses(parseInt(e.target.value));
+    const pos = parseInt(e.target.value, 10);
+    setLicenses(sliderPosToLicenses(pos));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -87,6 +127,7 @@ export default function PricingCalculator() {
         },
         body: JSON.stringify({
           email: formData.email,
+          phone: formData.phone,
           name: formData.name,
           club: formData.club,
           licenses: licenses,
@@ -150,33 +191,51 @@ export default function PricingCalculator() {
                 <div className="relative pt-1 md:pt-2">
                   <input
                     type="range"
-                    min="5"
-                    max="150"
+                    min="0"
+                    max={MAX_SLIDER_POS}
                     step="1"
-                    value={licenses}
+                    value={sliderPos}
                     onChange={handleSliderChange}
-                    className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-brand-green focus:outline-none"
+                    style={{
+                      background: `linear-gradient(to right, #79CA7B 0%, #79CA7B ${sliderPercent}%, #e2e8f0 ${sliderPercent}%, #e2e8f0 100%)`
+                    }}
+                    className="w-full h-1.5 rounded-lg appearance-none cursor-pointer accent-brand-green focus:outline-none"
                   />
-                  <div className="flex justify-between mt-2 text-[9px] text-slate-400 font-black px-1 uppercase tracking-tighter">
-                    <span>5</span>
-                    <span>10</span>
-                    <span>20</span>
-                    <span>35</span>
-                    <span>60</span>
-                    <span>100</span>
-                    <span>150+</span>
+                  <div className="flex justify-between mt-2 text-[9px] text-slate-400 font-black px-1 uppercase tracking-tighter select-none">
+                    {MILESTONES.map((val) => {
+                      const isCurrent = licenses === val;
+                      const isPast = licenses >= val;
+                      return (
+                        <button
+                          key={val}
+                          type="button"
+                          onClick={() => setLicenses(val)}
+                          className={`transition-all hover:text-brand-green ${
+                            isCurrent
+                              ? 'text-brand-green font-black scale-110'
+                              : isPast
+                              ? 'text-slate-600 font-bold'
+                              : 'text-slate-400'
+                          }`}
+                        >
+                          {val === 150 ? '150+' : val}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
 
                 <div className="flex items-center gap-2 md:gap-4 mt-2">
                   <button 
+                    type="button"
                     onClick={() => setLicenses(Math.max(5, licenses - 1))}
                     className="flex-1 py-2 px-4 rounded-lg md:rounded-xl border border-slate-200 bg-white text-brand-dark hover:bg-slate-50 hover:border-brand-green/30 transition-all font-bold text-sm"
                   >
                     -
                   </button>
                   <button 
-                    onClick={() => setLicenses(Math.min(200, licenses + 1))}
+                    type="button"
+                    onClick={() => setLicenses(Math.min(150, licenses + 1))}
                     className="flex-1 py-2 px-4 rounded-lg md:rounded-xl border border-slate-200 bg-white text-brand-dark hover:bg-slate-50 hover:border-brand-green/30 transition-all font-bold text-sm"
                   >
                     +
@@ -232,23 +291,40 @@ export default function PricingCalculator() {
                 <p className="text-slate-600">Offre sélectionnée : <span className="font-bold text-brand-green">{pricing.tierName} ({licenses} licences)</span></p>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-5">
-                <div className="space-y-2">
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Votre Adresse Email</label>
-                  <div className="relative">
-                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                    <input 
-                      required
-                      type="email"
-                      placeholder="nom@club.com"
-                      className="w-full bg-white border border-slate-200 rounded-xl py-4 pl-12 pr-4 focus:ring-2 focus:ring-brand-green/20 focus:border-brand-green outline-none transition-all"
-                      value={formData.email}
-                      onChange={e => setFormData({...formData, email: e.target.value})}
-                    />
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Adresse Email</label>
+                    <div className="relative">
+                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                      <input 
+                        required
+                        type="email"
+                        placeholder="nom@club.com"
+                        className="w-full bg-white border border-slate-200 rounded-xl py-3 pl-12 pr-4 focus:ring-2 focus:ring-brand-green/20 focus:border-brand-green outline-none transition-all text-sm"
+                        value={formData.email}
+                        onChange={e => setFormData({...formData, email: e.target.value})}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Téléphone</label>
+                    <div className="relative">
+                      <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                      <input 
+                        required
+                        type="tel"
+                        placeholder="06 12 34 56 78"
+                        className="w-full bg-white border border-slate-200 rounded-xl py-3 pl-12 pr-4 focus:ring-2 focus:ring-brand-green/20 focus:border-brand-green outline-none transition-all text-sm"
+                        value={formData.phone}
+                        onChange={e => setFormData({...formData, phone: e.target.value})}
+                      />
+                    </div>
                   </div>
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Nom & Prénom</label>
                   <div className="relative">
                     <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
@@ -256,14 +332,14 @@ export default function PricingCalculator() {
                       required
                       type="text"
                       placeholder="Jean Dupont"
-                      className="w-full bg-white border border-slate-200 rounded-xl py-4 pl-12 pr-4 focus:ring-2 focus:ring-brand-green/20 focus:border-brand-green outline-none transition-all"
+                      className="w-full bg-white border border-slate-200 rounded-xl py-3 pl-12 pr-4 focus:ring-2 focus:ring-brand-green/20 focus:border-brand-green outline-none transition-all text-sm"
                       value={formData.name}
                       onChange={e => setFormData({...formData, name: e.target.value})}
                     />
                   </div>
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Nom du Club</label>
                   <div className="relative">
                     <Building className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
@@ -271,7 +347,7 @@ export default function PricingCalculator() {
                       required
                       type="text"
                       placeholder="FC Exemple"
-                      className="w-full bg-white border border-slate-200 rounded-xl py-4 pl-12 pr-4 focus:ring-2 focus:ring-brand-green/20 focus:border-brand-green outline-none transition-all"
+                      className="w-full bg-white border border-slate-200 rounded-xl py-3 pl-12 pr-4 focus:ring-2 focus:ring-brand-green/20 focus:border-brand-green outline-none transition-all text-sm"
                       value={formData.club}
                       onChange={e => setFormData({...formData, club: e.target.value})}
                     />
@@ -280,7 +356,7 @@ export default function PricingCalculator() {
 
                 <button 
                   type="submit"
-                  className="w-full bg-brand-green hover:brightness-105 text-white font-black py-5 rounded-2xl transition-all shadow-lg shadow-brand-green/20 uppercase tracking-widest text-sm flex items-center justify-center gap-3"
+                  className="w-full bg-brand-green hover:brightness-105 text-white font-black py-4 md:py-5 rounded-2xl transition-all shadow-lg shadow-brand-green/20 uppercase tracking-widest text-sm flex items-center justify-center gap-3 mt-4"
                 >
                   Confirmer ma demande
                   <ArrowRight size={18} />
@@ -309,7 +385,7 @@ export default function PricingCalculator() {
               <button 
                 onClick={() => {
                   setView('pricing');
-                  setFormData({ email: '', name: '', club: '' });
+                  setFormData({ email: '', phone: '', name: '', club: '' });
                 }}
                 className="text-slate-400 hover:text-brand-green font-bold transition-colors mt-8"
               >
